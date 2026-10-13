@@ -1,0 +1,35 @@
+Variable,Tipo,Nulos,No Nulos,Unicos,Fuente,Justificacion
+ID_Sismo,object,0,862,862,Desconocida,Variable del dataset original
+Fecha_Texto_Original,object,0,862,862,Desconocida,Variable del dataset original
+Fecha_Dia_Año_Mes,object,0,862,744,Desconocida,Variable del dataset original
+Fecha_Hora_Completa,datetime64[ns],862,0,0,Catálogo SGC,Variable original del catálogo oficial
+Año,int64,0,862,18,Catálogo SGC,Variable original del catálogo oficial
+Mes,int64,0,862,12,Catálogo SGC,Variable original del catálogo oficial
+Nombre_Mes,object,0,862,12,Desconocida,Variable del dataset original
+Dia,int64,0,862,31,Catálogo SGC,Variable original del catálogo oficial
+Hora,int64,0,862,24,Catálogo SGC,Variable original del catálogo oficial
+Latitud,float64,0,862,222,Catálogo SGC,Variable original del catálogo oficial
+Longitud,float64,0,862,203,Catálogo SGC,Variable original del catálogo oficial
+Magnitud,float64,0,862,51,Catálogo SGC,Variable original del catálogo oficial
+Intensidad_Maxima,int64,0,862,6,Desconocida,Variable del dataset original
+Intensidad_Sitio,int64,0,862,4,Desconocida,Variable del dataset original
+Area_Epicentral,object,0,862,164,Desconocida,Variable del dataset original
+Municipio_Epicentral,object,0,862,158,Desconocida,Variable del dataset original
+Departamento_Reporte,object,0,862,1,Desconocida,Variable del dataset original
+Municipio_Reporte,object,0,862,1,Desconocida,Variable del dataset original
+Centro_Poblado_Reporte,object,0,862,1,Desconocida,Variable del dataset original
+dia_semana,object,0,862,1,Derivada,Control de calidad (no debería haber diferencias reales)
+franja_horaria,object,0,862,2,Derivada,Patrones horarios (día/noche)
+categoria_magnitud,object,0,862,6,Derivada,Facilita comparar y filtrar sismos por tamaño
+profundidad_km,float64,0,862,862,Inferida,Inferida basándose en características del Nido (100-160 km)
+categoria_profundidad,object,0,862,2,Derivada,"Separa tipos de fuente sísmica (superficial, intermedio, profundo)"
+energia_liberada,float64,0,862,51,Derivada,"Fórmula log10(E) = 1.5·M + 4.8, más útil que magnitud para sumar"
+distancia_centro_nido_km,float64,0,862,435,Derivada,Distancia al centro del Nido de Bucaramanga (Haversine)
+distancia_a_bucaramanga_km,float64,0,862,453,Derivada,Cercanía a la zona urbana de Bucaramanga
+codigo_divipola,float64,862,0,0,DANE (pendiente),Código oficial y población municipal
+poblacion_municipio,float64,862,0,0,DANE (pendiente),Código oficial y población municipal
+area_km2,float64,862,0,0,IGAC (pendiente),Área territorial del municipio
+zona_amenaza_sismica,float64,862,0,0,SGC/NSR-10 (pendiente),Nivel de amenaza sísmica según norma colombiana
+sismos_por_100mil_hab,float64,862,0,0,Calculada (pendiente),Normaliza para comparar municipios de distinto tamaño
+distancia_a_falla_km,float64,862,0,0,SGC (pendiente),Distancia a fallas geológicas activas
+tipo_magnitud,object,0,862,1,SGC (pendiente),"Permite comparar magnitudes de forma coherente (ML, Mw)"

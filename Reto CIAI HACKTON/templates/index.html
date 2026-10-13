@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Clasificacion de Riesgo Sismico - Santander</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #informe-contenido p, #informe-contenido h3 { margin: 16px 0; line-height: 1.6; }
+        #informe-contenido { overflow-x: auto; }
+        #informe-contenido ul { margin: 16px 24px; line-height: 1.6; }
+        .nav-tabs { flex-wrap: wrap; }
+        #estado-informe { margin: 16px 0; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background-color: #34495e;
+            margin-bottom: 20px;
+        }
+
+        .nav-tab {
+            padding: 15px 25px;
+            color: white;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+        }
+
+        .nav-tab:hover {
+            background-color: #3d566e;
+        }
+
+        .nav-tab.active {
+            background-color: #3498db;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .metric-card h3 {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .metric-card .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .chart-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .result-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .result-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .result-BAJO { background-color: #2ecc71; }
+        .result-MEDIO { background-color: #f1c40f; }
+        .result-ALTO { background-color: #e67e22; }
+        .result-CRITICO { background-color: #e74c3c; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #34495e;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        #map {
+            height: 500px;
+            border-radius: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='informes.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Clasificacion de Riesgo Sismico - Santander</h1>
+        <p>Hackathon CIAI 2026</p>
+    </header>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="showTab('clasificacion')">Clasificacion</button>
+            <button class="nav-tab" onclick="showTab('mapa')">Mapa</button>
+            <button class="nav-tab" onclick="showTab('priorizacion')">Priorizacion</button>
+            <button class="nav-tab" onclick="showTab('analisis')">Analisis</button>
+            <button class="nav-tab" onclick="showTab('informe')">IA e informes</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="metrics" id="metrics">
+                <div class="loading">Cargando metricas...</div>
+            </div>
+
+            <div class="chart-container">
+                <h2>Distribucion de Riesgo</h2>
+                <canvas id="riskChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Indice de Riesgo por Zona</h2>
+                <canvas id="zoneChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Clasificacion Tab -->
+        <div id="clasificacion" class="tab-content">
+            <div class="form-container">
+                <h2>Clasificacion de Riesgo en Tiempo Real</h2>
+                <p>Ingrese los datos del evento sismico para clasificarlo.</p>
+
+                <div class="form-group">
+                    <label>Magnitud (Richter):</label>
+                    <input type="number" id="magnitud" step="0.1" min="0" max="10" value="4.0">
+                </div>
+
+                <div class="form-group">
+                    <label>Profundidad (km):</label>
+                    <input type="number" id="profundidad" step="1" min="0" max="700" value="50">
+                </div>
+
+                <div class="form-group">
+                    <label>Ubicacion:</label>
+                    <select id="ubicacion">
+                        <option value="Los Santos">Los Santos</option>
+                        <option value="Zapatoca">Zapatoca</option>
+                        <option value="Villanueva">Villanueva</option>
+                        <option value="El Playon">El Playon</option>
+                        <option value="Giron">Giron</option>
+                        <option value="Jordan">Jordan</option>
+                        <option value="Rionegro">Rionegro</option>
+                        <option value="Piedecuesta">Piedecuesta</option>
+                        <option value="Simacota">Simacota</option>
+                        <option value="El Carmen">El Carmen</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" onclick="clasificarEvento()">Clasificar</button>
+            </div>
+
+            <div id="resultado" class="result-container" style="display: none;">
+                <h2>Resultado de Clasificacion</h2>
+                <div id="resultado-badge"></div>
+                <p id="resultado-mensaje"></p>
+            </div>
+
+            <div id="similares" class="chart-container" style="display: none;">
+                <h2>Eventos Historicos Similares</h2>
+                <table id="tabla-similares">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Magnitud</th>
+                            <th>Profundidad estimada (km)</th>
+                            <th>Ubicacion</th>
+                            <th>Riesgo</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Mapa Tab -->
+        <div id="mapa" class="tab-content">
+            <div class="chart-container">
+                <h2>Mapa de Riesgo por Municipio</h2>
+                <div id="map"></div>
+            </div>
+        </div>
+
+        <!-- Priorizacion Tab -->
+        <div id="priorizacion" class="tab-content">
+            <div class="chart-container">
+                <h2>Sistema de Priorizacion de Zonas</h2>
+                <p>Ranking de prioridad de atencion basado en indice de riesgo, eventos criticos y magnitud maxima.</p>
+                <table id="tabla-priorizacion">
+                    <thead>
+                        <tr>
+                            <th>Municipio</th>
+                            <th>Score Prioridad</th>
+                            <th>Nivel Prioridad</th>
+                            <th>Indice Riesgo</th>
+                            <th>Eventos Criticos</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="chart-container">
+                <h2>Visualizacion de Prioridad</h2>
+                <canvas id="priorityChart"></canvas>
+            </div>
+        </div>
+
+        <div id="informe" class="tab-content">
+            <div class="chart-container">
+                <h2>Informe técnico de actividad sísmica</h2>
+                <p>Estima la probabilidad de actividad registrada y genera conclusiones verificables. No predice sismos individuales ni emite alertas.</p>
+                <form id="form-informe">
+                    <div class="form-group">
+                        <label for="archivo-informe">CSV opcional proporcionado desde esta página (máximo 5 MB)</label>
+                        <input id="archivo-informe" name="archivo" type="file" accept=".csv,text/csv">
+                        <p>Columnas: fecha (ISO 8601, UTC si no incluye zona), magnitud, latitud, longitud; ubicación e id opcionales. También admite el formato original SGC. Sin archivo, analiza el rack local.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="umbral-informe">Magnitud mínima del registro a estimar</label>
+                        <input id="umbral-informe" name="magnitud_minima" type="number" min="-2" max="10" step="0.1" value="3.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dias-informe">Horizonte experimental (días)</label>
+                        <input id="dias-informe" name="dias" type="number" min="1" max="30" value="7" required>
+                    </div>
+                    <p style="margin:16px 0"><label><input id="consultar-web" type="checkbox" checked> Consultar catálogo oficial USGS (últimos 90 días). Si falla, utilizar datos locales y respaldo guardado.</label></p>
+                    <button id="generar-informe" class="btn btn-primary" type="submit">Analizar y generar informe</button>
+                    <button id="descargar-pdf" class="btn" type="button" disabled>Exportar informe PDF</button>
+                    <button id="descargar-informe" class="btn" type="button" disabled>Descargar informe JSON</button>
+                </form>
+                <p id="estado-informe" role="status" aria-live="polite">Listo para analizar. El modelo se ejecuta localmente.</p>
+                <div id="informe-contenido"></div>
+            </div>
+        </div>
+
+        <!-- Analisis Tab -->
+        <div id="analisis" class="tab-content">
+            <div class="chart-container">
+                <h2>Estimación experimental de registros a 7 días</h2>
+                <p id="limites-pronostico" style="margin: 16px 0"></p>
+                <table id="tabla-prediccion">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Probabilidad Evento</th>
+                            <th>Magnitud mínima</th>
+                            <th>Método</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="chart-container">
+                <h2>Estadisticas por Zona</h2>
+                <p>Las profundidades del catálogo local son aproximaciones heredadas (intensidad × 30); no son mediciones y no se usan en el modelo de IA.</p>
+                <table id="tabla-estadisticas">
+                    <thead>
+                        <tr>
+                            <th>Ubicacion</th>
+                            <th>Mag Promedio</th>
+                            <th>Mag Maxima</th>
+                            <th>Prof estimada promedio</th>
+                            <th>Eventos Criticos</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let map = null;
+        let charts = {};
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.nav-tab[onclick="showTab('${tabId}')"]`)?.classList.add('active');
+
+            if (tabId === 'dashboard') {
+                loadDashboard();
+            } else if (tabId === 'mapa') {
+                loadMap();
+            } else if (tabId === 'priorizacion') {
+                loadPriorizacion();
+            } else if (tabId === 'analisis') {
+                loadAnalisis();
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/dashboard`);
+                const data = await response.json();
+
+                // Metrics
+                const metricsHtml = `
+                    <div class="metric-card">
+                        <h3>Total Eventos</h3>
+                        <div class="value">${data.metricas.total_eventos}</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Zonas Monitoreadas</h3>
+                        <div class="value">${data.metricas.zonas_monitoreadas}</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Eventos Criticos</h3>
+                        <div class="value">${data.metricas.eventos_criticos}</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Max Indice Riesgo</h3>
+                        <div class="value">${data.metricas.max_indice_riesgo.toFixed(2)}</div>
+                    </div>
+                `;
+                document.getElementById('metrics').innerHTML = metricsHtml;
+
+                // Risk Distribution Chart
+                createRiskChart(data.distribucion_riesgo);
+
+                // Load zones for zone chart
+                const zonasResponse = await fetch(`${API_BASE}/zonas`);
+                const zonas = await zonasResponse.json();
+                createZoneChart(zonas);
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function createRiskChart(distribucion) {
+            if (typeof Chart === 'undefined') return;
+            const ctx = document.getElementById('riskChart').getContext('2d');
+            if (charts.risk) charts.risk.destroy();
+
+            const labels = Object.keys(distribucion);
+            const values = Object.values(distribucion);
+            const colors = {
+                'BAJO': '#2ecc71',
+                'MEDIO': '#f1c40f',
+                'ALTO': '#e67e22',
+                'CRITICO': '#e74c3c'
+            };
+
+            charts.risk = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Numero de Eventos',
+                        data: values,
+                        backgroundColor: labels.map(l => colors[l] || '#95a5a6')
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function createZoneChart(zonas) {
+            if (typeof Chart === 'undefined') return;
+            const ctx = document.getElementById('zoneChart').getContext('2d');
+            if (charts.zone) charts.zone.destroy();
+
+            const sortedZonas = [...zonas].sort((a, b) => a.indice_riesgo - b.indice_riesgo);
+
+            charts.zone = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedZonas.map(z => z.ubicacion),
+                    datasets: [{
+                        label: 'Indice de Riesgo',
+                        data: sortedZonas.map(z => z.indice_riesgo),
+                        backgroundColor: sortedZonas.map(z => z.color)
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true
+                }
+            });
+        }
+
+        async function clasificarEvento() {
+            const magnitud = parseFloat(document.getElementById('magnitud').value);
+            const profundidad = parseFloat(document.getElementById('profundidad').value);
+            const ubicacion = document.getElementById('ubicacion').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/clasificar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ magnitud, profundidad, ubicacion })
+                });
+
+                const data = await response.json();
+
+                // Show result
+                const resultadoDiv = document.getElementById('resultado');
+                resultadoDiv.style.display = 'block';
+
+                const badgeDiv = document.getElementById('resultado-badge');
+                badgeDiv.className = `result-badge result-${data.riesgo}`;
+                badgeDiv.textContent = `Nivel de Riesgo: ${data.riesgo}`;
+
+                const mensajeDiv = document.getElementById('resultado-mensaje');
+                if (data.riesgo === 'CRITICO') {
+                    mensajeDiv.textContent = 'Clasificación orientativa del evento. Consulte las indicaciones de las autoridades; esta herramienta no emite órdenes de evacuación.';
+                } else if (data.riesgo === 'ALTO') {
+                    mensajeDiv.textContent = 'Medidas de precaucion inmediatas.';
+                } else if (data.riesgo === 'MEDIO') {
+                    mensajeDiv.textContent = 'Mantenerse informado y preparado.';
+                } else {
+                    mensajeDiv.textContent = 'Riesgo bajo, monitoreo normal.';
+                }
+
+                // Show similar events
+                const similaresDiv = document.getElementById('similares');
+                similaresDiv.style.display = 'block';
+
+                const tbody = document.querySelector('#tabla-similares tbody');
+                tbody.innerHTML = data.eventos_similares.map(e => `
+                    <tr>
+                        <td>${new Date(e.fecha).toLocaleDateString()}</td>
+                        <td>${e.magnitud}</td>
+                        <td>${e.profundidad}</td>
+                        <td>${e.ubicacion}</td>
+                        <td>${e.clasificacion}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error clasificando evento:', error);
+            }
+        }
+
+        async function loadMap() {
+            if (typeof L === 'undefined') {
+                document.getElementById('map').textContent = 'Mapa no disponible sin internet. Los informes y las tablas siguen disponibles en IA e informes.';
+                return;
+            }
+            if (map) return;
+
+            map = L.map('map').setView([6.8, -73.1], 9);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'OpenStreetMap'
+            }).addTo(map);
+
+            try {
+                // Cargar eventos sismicos para mostrar puntos individuales
+                const eventosResponse = await fetch(`${API_BASE}/eventos?limit=200`);
+                const eventos = await eventosResponse.json();
+
+                // Mostrar cada evento como un punto
+                eventos.forEach(evento => {
+                    const colorPorRiesgo = {
+                        'BAJO': '#2ecc71',
+                        'MEDIO': '#f1c40f',
+                        'ALTO': '#e67e22',
+                        'CRITICO': '#e74c3c'
+                    };
+
+                    const radius = 3 + (evento.magnitud * 2);
+                    const color = colorPorRiesgo[evento.clasificacion] || '#95a5a6';
+
+                    const marker = L.circleMarker([evento.latitud, evento.longitud], {
+                        radius: radius,
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: 0.7,
+                        weight: 1
+                    }).addTo(map);
+
+                    marker.bindPopup(`
+                        <div>
+                            <h4 style="color: ${color}">Evento Sismico</h4>
+                            <p><b>Fecha:</b> ${new Date(evento.fecha).toLocaleString()}</p>
+                            <p><b>Magnitud:</b> ${evento.magnitud}</p>
+                            <p><b>Profundidad estimada:</b> ${evento.profundidad.toFixed(1)} km</p>
+                            <p><b>Ubicacion:</b> ${evento.ubicacion}</p>
+                            <p><b>Riesgo:</b> ${evento.clasificacion}</p>
+                        </div>
+                    `);
+                });
+
+                // Agregar circulos de riesgo por zona (opcional, superpuesto)
+                const zonasResponse = await fetch(`${API_BASE}/zonas`);
+                const zonas = await zonasResponse.json();
+
+                zonas.forEach(zona => {
+                    if (zona.latitud !== 0 && zona.longitud !== 0) {
+                        const marker = L.circle([zona.latitud, zona.longitud], {
+                            radius: 15000, // 15km radio
+                            color: zona.color,
+                            fillColor: zona.color,
+                            fillOpacity: 0.1,
+                            weight: 2,
+                            dashArray: '5, 10'
+                        }).addTo(map);
+
+                        marker.bindPopup(`
+                            <div>
+                                <h4 style="color: ${zona.color}">${zona.ubicacion}</h4>
+                                <p><b>Indice de Riesgo:</b> ${zona.indice_riesgo.toFixed(2)}/100</p>
+                                <p><b>Nivel:</b> ${zona.riesgo_zonal}</p>
+                                <p><b>Eventos Totales:</b> ${zona.total_eventos}</p>
+                            </div>
+                        `);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error loading map:', error);
+            }
+        }
+
+        async function loadPriorizacion() {
+            try {
+                const response = await fetch(`${API_BASE}/priorizacion`);
+                const prioridad = await response.json();
+
+                // Table
+                const tbody = document.querySelector('#tabla-priorizacion tbody');
+                tbody.innerHTML = prioridad.map(p => `
+                    <tr>
+                        <td>${p.ubicacion}</td>
+                        <td>${p.score_prioridad.toFixed(2)}</td>
+                        <td>${p.nivel_prioridad}</td>
+                        <td>${p.indice_riesgo.toFixed(2)}</td>
+                        <td>${p.eventos_criticos}</td>
+                    </tr>
+                `).join('');
+
+                // Chart
+                if (typeof Chart === 'undefined') return;
+                const ctx = document.getElementById('priorityChart').getContext('2d');
+                if (charts.priority) charts.priority.destroy();
+
+                const priorityColors = {
+                    'BAJA': '#2ecc71',
+                    'MEDIA': '#f1c40f',
+                    'ALTA': '#e67e22',
+                    'CRITICA': '#e74c3c'
+                };
+
+                charts.priority = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: prioridad.map(p => p.ubicacion),
+                        datasets: [{
+                            label: 'Score de Prioridad',
+                            data: prioridad.map(p => p.score_prioridad),
+                            backgroundColor: prioridad.map(p => priorityColors[p.nivel_prioridad] || '#95a5a6')
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error loading priorizacion:', error);
+            }
+        }
+
+        async function loadAnalisis() {
+            try {
+                // Prediccion
+                const predResponse = await fetch(`${API_BASE}/prediccion`);
+                const pronostico = await predResponse.json();
+                const prediccion = pronostico.dias || [];
+
+                const predTbody = document.querySelector('#tabla-prediccion tbody');
+                predTbody.innerHTML = prediccion.map(p => `
+                    <tr>
+                        <td>${p.fecha}</td>
+                        <td>${(p.probabilidad_evento * 100).toFixed(1)}%</td>
+                        <td>≥ ${p.magnitud_minima}</td>
+                        <td>${pronostico.modelo}</td>
+                    </tr>
+                `).join('');
+                document.getElementById('limites-pronostico').textContent = pronostico.limitacion + (pronostico.motivo ? ' ' + pronostico.motivo : '');
+
+                // Estadisticas
+                const statsResponse = await fetch(`${API_BASE}/estadisticas`);
+                const estadisticas = await statsResponse.json();
+
+                const statsTbody = document.querySelector('#tabla-estadisticas tbody');
+                statsTbody.innerHTML = estadisticas.map(s => `
+                    <tr>
+                        <td>${s.ubicacion}</td>
+                        <td>${s.mag_promedio}</td>
+                        <td>${s.mag_maxima}</td>
+                        <td>${s.prof_promedio.toFixed(1)}</td>
+                        <td>${s.eventos_criticos}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading analisis:', error);
+            }
+        }
+
+        // Load dashboard on page load
+        window.onload = loadDashboard;
+    </script>
+    <script src="{{ url_for('static', filename='analisis.js') }}"></script>
+</body>
+</html>

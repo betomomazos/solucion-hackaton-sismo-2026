@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_16513caf2dd4f18a7e8797a24cabe4ff {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+        <h3 align="center" style="font-size:20px"><b>Riesgo Sísmico por Municipio - Santander</b></h3>
+        <p align="center" style="font-size:12px">Índice de riesgo basado en magnitud, profundidad y frecuencia de eventos</p>
+    
+    
+        <div style="position: fixed;
+                    bottom: 50px; left: 50px; width: 150px; height: 140px;
+                    background-color: white; border: 2px solid grey; z-index: 9999;
+                    font-size: 12px; padding: 10px">
+            <p style="font-weight: bold; margin: 0 0 10px 0;">Nivel de Riesgo</p>
+            <p><i class="fa fa-circle" style="color: #2ecc71"></i> BAJO</p>
+            <p><i class="fa fa-circle" style="color: #f1c40f"></i> MEDIO</p>
+            <p><i class="fa fa-circle" style="color: #e67e22"></i> ALTO</p>
+            <p><i class="fa fa-circle" style="color: #e74c3c"></i> CRÍTICO</p>
+        </div>
+    
+    
+            <div class="folium-map" id="map_16513caf2dd4f18a7e8797a24cabe4ff" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_16513caf2dd4f18a7e8797a24cabe4ff = L.map(
+                "map_16513caf2dd4f18a7e8797a24cabe4ff",
+                {
+                    center: [6.8, -73.1],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 9,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_56a433a9457f30ccbd88f052929424ba = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_56a433a9457f30ccbd88f052929424ba.addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+            var circle_marker_2f92bff7950596c090b66509e82839d4 = L.circleMarker(
+                [6.435917424242423, -73.2202446969697],
+                {"bubblingMouseEvents": true, "color": "#f1c40f", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f1c40f", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17.22, "stroke": true, "weight": 2}
+            ).addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+        var popup_e5c8a783da2e0cb2523f85e53f79ac73 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_10d68545eae6f9ba7fa18f32683de7d9 = $(`<div id="html_10d68545eae6f9ba7fa18f32683de7d9" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; font-size: 12px;">             <h4 style="color: #f1c40f;">Barichara</h4>             <p><b>Índice de Riesgo:</b> 36.10/100</p>             <p><b>Nivel:</b> MEDIO</p>             <p><b>Eventos Totales:</b> 132</p>             <p><b>Mag. Promedio:</b> 3.38</p>             <p><b>Mag. Máxima:</b> 7.00</p>             <p><b>Prof. Promedio:</b> 95.7 km</p>         </div>         </div>`)[0];
+                popup_e5c8a783da2e0cb2523f85e53f79ac73.setContent(html_10d68545eae6f9ba7fa18f32683de7d9);
+            
+        
+
+        circle_marker_2f92bff7950596c090b66509e82839d4.bindPopup(popup_e5c8a783da2e0cb2523f85e53f79ac73)
+        ;
+
+        
+    
+    
+            var marker_62da78c955eb76efa3349a25b8f410e2 = L.marker(
+                [6.435917424242423, -73.2202446969697],
+                {}
+            ).addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+            var div_icon_041be1a7bc8cdd6219f77ef39ec27f64 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"font-size: 10px; font-weight: bold; color: #333;\"\u003eBarichara\u003c/div\u003e", "iconAnchor": [40, 10], "iconSize": [80, 20]});
+            marker_62da78c955eb76efa3349a25b8f410e2.setIcon(div_icon_041be1a7bc8cdd6219f77ef39ec27f64);
+        
+    
+            var circle_marker_360cb88e8d59a3957460995a4aab0d2b = L.circleMarker(
+                [7.129425886524823, -73.11815673758866],
+                {"bubblingMouseEvents": true, "color": "#f1c40f", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f1c40f", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17.032, "stroke": true, "weight": 2}
+            ).addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+        var popup_f4103dda85fcb77bf9975a7404c7ebe5 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_27a0c0a8a955a9dfbb0508f4dc6628ee = $(`<div id="html_27a0c0a8a955a9dfbb0508f4dc6628ee" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; font-size: 12px;">             <h4 style="color: #f1c40f;">Bucaramanga</h4>             <p><b>Índice de Riesgo:</b> 35.16/100</p>             <p><b>Nivel:</b> MEDIO</p>             <p><b>Eventos Totales:</b> 282</p>             <p><b>Mag. Promedio:</b> 3.39</p>             <p><b>Mag. Máxima:</b> 7.00</p>             <p><b>Prof. Promedio:</b> 97.6 km</p>         </div>         </div>`)[0];
+                popup_f4103dda85fcb77bf9975a7404c7ebe5.setContent(html_27a0c0a8a955a9dfbb0508f4dc6628ee);
+            
+        
+
+        circle_marker_360cb88e8d59a3957460995a4aab0d2b.bindPopup(popup_f4103dda85fcb77bf9975a7404c7ebe5)
+        ;
+
+        
+    
+    
+            var marker_98955428b679cccfc9b9ca12a97870fd = L.marker(
+                [7.129425886524823, -73.11815673758866],
+                {}
+            ).addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+            var div_icon_4e6a6d79b85a45e74fb3ed3fc4a172e4 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"font-size: 10px; font-weight: bold; color: #333;\"\u003eBucaramanga\u003c/div\u003e", "iconAnchor": [40, 10], "iconSize": [80, 20]});
+            marker_98955428b679cccfc9b9ca12a97870fd.setIcon(div_icon_4e6a6d79b85a45e74fb3ed3fc4a172e4);
+        
+    
+            var circle_marker_dfe54ec999091ea34b3183f30690cc33 = L.circleMarker(
+                [7.075845000000001, -73.17029357142857],
+                {"bubblingMouseEvents": true, "color": "#f1c40f", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f1c40f", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 16.902, "stroke": true, "weight": 2}
+            ).addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+        var popup_7da02baf23c026c15738df39ec0c6499 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_b684c081707beaa3aa18c8eb107ae762 = $(`<div id="html_b684c081707beaa3aa18c8eb107ae762" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; font-size: 12px;">             <h4 style="color: #f1c40f;">Girón</h4>             <p><b>Índice de Riesgo:</b> 34.51/100</p>             <p><b>Nivel:</b> MEDIO</p>             <p><b>Eventos Totales:</b> 140</p>             <p><b>Mag. Promedio:</b> 3.47</p>             <p><b>Mag. Máxima:</b> 7.00</p>             <p><b>Prof. Promedio:</b> 103.5 km</p>         </div>         </div>`)[0];
+                popup_7da02baf23c026c15738df39ec0c6499.setContent(html_b684c081707beaa3aa18c8eb107ae762);
+            
+        
+
+        circle_marker_dfe54ec999091ea34b3183f30690cc33.bindPopup(popup_7da02baf23c026c15738df39ec0c6499)
+        ;
+
+        
+    
+    
+            var marker_540079c127092f9cff49e4c37be4f3c1 = L.marker(
+                [7.075845000000001, -73.17029357142857],
+                {}
+            ).addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+            var div_icon_7be477b6c674df6b8ed4f36d4229bc83 = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"font-size: 10px; font-weight: bold; color: #333;\"\u003eGir\u00f3n\u003c/div\u003e", "iconAnchor": [40, 10], "iconSize": [80, 20]});
+            marker_540079c127092f9cff49e4c37be4f3c1.setIcon(div_icon_7be477b6c674df6b8ed4f36d4229bc83);
+        
+    
+            var circle_marker_58b03df9b271021204ffd47da5bfda62 = L.circleMarker(
+                [6.810104079782412, -73.1490652765186],
+                {"bubblingMouseEvents": true, "color": "#f1c40f", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f1c40f", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17.192, "stroke": true, "weight": 2}
+            ).addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+        var popup_17e8ecd47a47bd83dc681f28ce68c2bb = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_0db5d5c9412de2b4e2760e0111a565b4 = $(`<div id="html_0db5d5c9412de2b4e2760e0111a565b4" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; font-size: 12px;">             <h4 style="color: #f1c40f;">Los Santos</h4>             <p><b>Índice de Riesgo:</b> 35.96/100</p>             <p><b>Nivel:</b> MEDIO</p>             <p><b>Eventos Totales:</b> 1103</p>             <p><b>Mag. Promedio:</b> 3.37</p>             <p><b>Mag. Máxima:</b> 7.00</p>             <p><b>Prof. Promedio:</b> 93.4 km</p>         </div>         </div>`)[0];
+                popup_17e8ecd47a47bd83dc681f28ce68c2bb.setContent(html_0db5d5c9412de2b4e2760e0111a565b4);
+            
+        
+
+        circle_marker_58b03df9b271021204ffd47da5bfda62.bindPopup(popup_17e8ecd47a47bd83dc681f28ce68c2bb)
+        ;
+
+        
+    
+    
+            var marker_52bff96cc5ef5fcb1e10cf47f01b4dc3 = L.marker(
+                [6.810104079782412, -73.1490652765186],
+                {}
+            ).addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+            var div_icon_e0c0b91bf847f3dc85de3c6cdfec9e0a = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"font-size: 10px; font-weight: bold; color: #333;\"\u003eLos Santos\u003c/div\u003e", "iconAnchor": [40, 10], "iconSize": [80, 20]});
+            marker_52bff96cc5ef5fcb1e10cf47f01b4dc3.setIcon(div_icon_e0c0b91bf847f3dc85de3c6cdfec9e0a);
+        
+    
+            var circle_marker_9fec8e02a2fbf9cc0d0ffb080cd50f5a = L.circleMarker(
+                [7.001387005649717, -73.04947288135592],
+                {"bubblingMouseEvents": true, "color": "#f1c40f", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#f1c40f", "fillOpacity": 0.6, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 17.366, "stroke": true, "weight": 2}
+            ).addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+        var popup_7687a53da10e5c90a29c5cf5bd54a2b8 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_5c683b47cb61e97c036416991a882b8f = $(`<div id="html_5c683b47cb61e97c036416991a882b8f" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; font-size: 12px;">             <h4 style="color: #f1c40f;">Piedecuesta</h4>             <p><b>Índice de Riesgo:</b> 36.83/100</p>             <p><b>Nivel:</b> MEDIO</p>             <p><b>Eventos Totales:</b> 177</p>             <p><b>Mag. Promedio:</b> 3.43</p>             <p><b>Mag. Máxima:</b> 7.00</p>             <p><b>Prof. Promedio:</b> 90.8 km</p>         </div>         </div>`)[0];
+                popup_7687a53da10e5c90a29c5cf5bd54a2b8.setContent(html_5c683b47cb61e97c036416991a882b8f);
+            
+        
+
+        circle_marker_9fec8e02a2fbf9cc0d0ffb080cd50f5a.bindPopup(popup_7687a53da10e5c90a29c5cf5bd54a2b8)
+        ;
+
+        
+    
+    
+            var marker_0cfc4225ea3d1276d1733f48b8d77d32 = L.marker(
+                [7.001387005649717, -73.04947288135592],
+                {}
+            ).addTo(map_16513caf2dd4f18a7e8797a24cabe4ff);
+        
+    
+            var div_icon_591fdf241f5022e4f5867656db43408d = L.divIcon({"className": "empty", "html": "\u003cdiv style=\"font-size: 10px; font-weight: bold; color: #333;\"\u003ePiedecuesta\u003c/div\u003e", "iconAnchor": [40, 10], "iconSize": [80, 20]});
+            marker_0cfc4225ea3d1276d1733f48b8d77d32.setIcon(div_icon_591fdf241f5022e4f5867656db43408d);
+        
+</script>
+</html>
